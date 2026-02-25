@@ -79,14 +79,14 @@ gcc Decryption.c -o decrypt
 The program will prompt you step by step:
 
 ```
-sifrelemek isteiginiz kelimeyi giriniz  : HELLO
-anahatarin (satir ve sutun) sayisini giriniz = 2
+Enter the word to encrypt: HELLO
+ Enter the key matrix size (rows and columns): 2
 1-1 = 3
 1-2 = 3
 2-1 = 2
 2-2 = 5
 
-sifrelenen kelime : GNLLE
+Encrypted word: GNLLE
 ```
 
 - Enter the **word** you want to encrypt.
@@ -103,14 +103,14 @@ sifrelenen kelime : GNLLE
 ```
 
 ```
-anahtarin (satir ve sutun) sayisini giriniz = 2
+Enter the key matrix size (rows and columns): 2
 1_1 = 3
 1_2 = 3
 2_1 = 2
 2_2 = 5
-asli istenen kelimeyi giriniz : GNLLE
+Enter the ciphertext to decrypt: GNLLE
 
-asil kelime: HELLO
+ Decrypted word: HELLO
 ```
 
 - Enter the **same key matrix** that was used during encryption.

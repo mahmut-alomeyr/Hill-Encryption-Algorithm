@@ -6,43 +6,43 @@ int power(int);
 
 int main()
 {
-    int i, j, uzunluk=0;
+    int i, j, length=0;
     int i2, j2, x, y;
     int i_2, j_2;
     int n, k;
-    float anahtar[100][100];
-    int tranzpose[100][100];
-    float kofaktor[100][100];
+    float key[100][100];
+    int transpose[100][100];
+    float cofactor[100][100];
     int r;
     int det;
-    char sifrelenen[100];
-    char sifrelenen_2[100][100];
-    int toplam = 0, kalan, yeni_uzunluk, u, t, toplam2 = 0;
-    char asil_kelime[100];
+    char ciphertext[100];
+    char ciphertext_matrix[100][100];
+    int total = 0, remainder, new_length, u, t, total2 = 0;
+    char original_word[100];
 
-    printf("anahtarin (satir ve sutun) sayisini giriniz = ");
+    printf("Enter the key matrix size (rows and columns): ");
     scanf("%d", &n);
 
     do
     {
-        for (i = 0; i < n; i++) //anahtar almak
+        for (i = 0; i < n; i++) //read the key matrix
         {
             for (j = 0; j < n; j++)
             {
                 printf("%d_%d = ", i + 1, j + 1);
-                scanf("%f", &anahtar[i][j]);
+                scanf("%f", &key[i][j]);
             }
         }
-        k = (int)determinant(anahtar, n);
+        k = (int)determinant(key, n);
         if (k == 0)
         {
-            printf("\nbu anahtar olmaz");
-            printf("\nbaska bi anahtar giriniz !\n");
+            printf("\nThis key is invalid");
+            printf("\nPlease enter a different key!\n");
         }
 
     } while (k == 0);
 
-    for (i = 0; i < n; i++) //anahtar matrisinin kofaktorunu bulmak
+    for (i = 0; i < n; i++) //find the cofactor matrix of the key
     {
         for (j = 0; j < n; j++)
         {
@@ -55,7 +55,7 @@ int main()
                 {
                     if (i2 != i && j2 != j)
                     {
-                        kofaktor[x][y] = anahtar[i2][j2];
+                        cofactor[x][y] = key[i2][j2];
                         if (y < (n - 2))
                         {
                             y++;
@@ -68,25 +68,25 @@ int main()
                     }
                 }
             }
-            r = (int)power(i + j) * determinant(kofaktor, n - 1);
+            r = (int)power(i + j) * determinant(cofactor, n - 1);
             if (r < 0)
             {
                 r += 26;
             }
-            kofaktor[i][j] = r;
+            cofactor[i][j] = r;
         }
     }
 
-    for (i = 0; i < n; i++) //tranzpose bulmak
+    for (i = 0; i < n; i++) //find the transpose
     {
         for (j = 0; j < n; j++)
         {
-            tranzpose[i][j] = kofaktor[j][i];
+            transpose[i][j] = cofactor[j][i];
         }
     }
 
     i = 1;
-    k = (int)determinant(anahtar, n);
+    k = (int)determinant(key, n);
     k = k % 26;
     if (k < 0)
     {
@@ -99,132 +99,132 @@ int main()
 
     det = 1 + 26 * i;
 
-    for (i = 0; i < n; i++) //anahtarin tersi
+    for (i = 0; i < n; i++) //inverse of the key matrix
     {
         for (j = 0; j < n; j++)
         {
-            tranzpose[i][j] = (det * tranzpose[i][j]) % 26;
+            transpose[i][j] = (det * transpose[i][j]) % 26;
         }
     }
 
-    printf("asli istenen kelimeyi giriniz : ");
-    scanf("%s", sifrelenen);
+    printf("Enter the ciphertext to decrypt: ");
+    scanf("%s", ciphertext);
 
-    while (sifrelenen[uzunluk] != '\0') //kelimenin uzunlugunu bulmak
+    while (ciphertext[length] != '\0') //find the length of the word
     {
-        uzunluk++;
+        length++;
     }
 
-    kalan = uzunluk % n;
-    yeni_uzunluk = uzunluk + kalan; //yeni uzunluk
-    u = yeni_uzunluk / n;
+    remainder = length % n;
+    new_length = length + remainder; //new length
+    u = new_length / n;
    
-    if (sifrelenen[0] > 64 && sifrelenen[0] < 91) //buyuk harfler için
+    if (ciphertext[0] > 64 && ciphertext[0] < 91) //for uppercase letters
     
     {
 
-        for (i = 0; i < kalan; i++) //eksik girilen kelimeye 'A' eklemek
+        for (i = 0; i < remainder; i++) //pad the word with 'A' if needed
         {
-            sifrelenen[uzunluk + i] = 'A';
+            ciphertext[length + i] = 'A';
         }
 
-        for (i = 0; i < u; i++) //kelimeyi iki boyutlu bir matrise eklemek
+        for (i = 0; i < u; i++) //store the word in a 2D matrix
         {
             for (j = 0; j < n; j++)
             {
-                sifrelenen_2[i][j] = sifrelenen[toplam + j] - 65; // A=0 , B=1 , C=2 ....VS seklinde yazmak
+                ciphertext_matrix[i][j] = ciphertext[total + j] - 65; // map A=0, B=1, C=2, ...
             }
-            toplam += j;
+            total += j;
 
             printf("\n");
         }
-        toplam = 0;
+        total = 0;
         for (i = 0; i < u; i++)
         {
             for (j = 0; j < n; j++)
             {
-                toplam2 = 0;
+                total2 = 0;
                 for (t = 0; t < n; t++)
                 {
-                    toplam2 += sifrelenen_2[i][t] * tranzpose[t][j]; //kelime matris ile anahtar carpimi
+                    total2 += ciphertext_matrix[i][t] * transpose[t][j]; //multiply word matrix by key matrix
                 }
-                toplam2 = toplam2 % 26;                 //mod almak
-                asil_kelime[j + toplam] = toplam2 + 65; //ascci taplosundaki degerine esitlemek
+                total2 = total2 % 26;                 //take mod
+                original_word[j + total] = total2 + 65; //map back to ASCII character
             }
-            toplam += j;
+            total += j;
         }
     }
-    else //kucuk harfler icin
+    else //for lowercase letters
     {
-        for (i = 0; i < kalan; i++) //eksik girilen kelimeye 'a' eklemek
+        for (i = 0; i < remainder; i++) //pad the word with 'a' if needed
         {
-            sifrelenen[uzunluk + i] = 'a';
+            ciphertext[length + i] = 'a';
         }
 
-        for (i = 0; i < u; i++) //kelimeyi iki boyutlu bir matrise eklemek
+        for (i = 0; i < u; i++) //store the word in a 2D matrix
         {
             for (j = 0; j < n; j++)
             {
-                sifrelenen_2[i][j] = sifrelenen[toplam + j] - 97; // a=0 , b=1 , c=2 ....VS seklinde yazmak
+                ciphertext_matrix[i][j] = ciphertext[total + j] - 97; // map a=0, b=1, c=2, ...
             }
-            toplam += j;
+            total += j;
 
             printf("\n");
         }
-        toplam = 0;
+        total = 0;
         for (i = 0; i < u; i++)
         {
             for (j = 0; j < n; j++)
             {
-                toplam2 = 0;
+                total2 = 0;
                 for (t = 0; t < n; t++)
                 {
-                    toplam2 += sifrelenen_2[i][t] * tranzpose[t][j]; //kelime matris ile anahtar carpimi
+                    total2 += ciphertext_matrix[i][t] * transpose[t][j]; //multiply word matrix by key matrix
                 }
-                toplam2 = toplam2 % 26;                 //mod almak
-                asil_kelime[j + toplam] = toplam2 + 97; //ascci taplosundaki degerine esitlemek
+                total2 = total2 % 26;                 //take mod
+                original_word[j + total] = total2 + 97; //map back to ASCII character
             }
-            toplam += j;
+            total += j;
         }
     }
 
-    printf("\n asil kelime: ");
-    printf("%s", asil_kelime);
+    printf("\n Decrypted word: ");
+    printf("%s", original_word);
 
     
 }
 
-float determinant(float matris[][100], int n)
+float determinant(float matrix[][100], int n)
 {
     int i, j, y;
-    float toplam = 1;
+    float total = 1;
     float k;
     for (i = 0; i < n; i++)
     {
         for (y = i; y < n - 1; y++)
         {
-            k = matris[y + 1][i];
+            k = matrix[y + 1][i];
 
             for (j = 0; j < n; j++)
             {
-                matris[y + 1][j] = (-1) * matris[i][j] * k / matris[i][i] + matris[y + 1][j];
+                matrix[y + 1][j] = (-1) * matrix[i][j] * k / matrix[i][i] + matrix[y + 1][j];
             }
         }
     }
 
     for (i = 0; i < n; i++)
     {
-        toplam *= matris[i][i];
+        total *= matrix[i][i];
     }
-    return toplam;
+    return total;
 }
 
 int power(int s)
 {
-    int sonuc;
+    int result;
     if (s % 2 == 0)
     {
-        return sonuc = 1;
+        return result = 1;
     }
-    return sonuc = -1;
+    return result = -1;
 }

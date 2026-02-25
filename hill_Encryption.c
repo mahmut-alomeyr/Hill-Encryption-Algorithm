@@ -4,113 +4,113 @@
 int main()
 {
     int i, j, k;
-    char kelime[100];
-    int uzunluk = 0, yeni_uzunluk;
-    int n, kalan, y;
-    int anahtar[100][100];
-    char kelime_2[100][100];
-    int toplam = 0;
-    int toplam2;
-    char sifrelenen_kelime[100];
+    char word[100];
+    int length = 0, new_length;
+    int n, remainder, y;
+    int key[100][100];
+    char word_matrix[100][100];
+    int total = 0;
+    int total2;
+    char encrypted_word[100];
 
-    printf("sifrelemek isteiginiz kelimeyi giriniz  : "); //kelime almak
-    gets(kelime);
+    printf("Enter the word to encrypt: "); //read the word
+    gets(word);
 
-    while (kelime[uzunluk] != '\0') //kelimenin uzunlugunu bulmak
+    while (word[length] != '\0') //find the length of the word
     {
-        uzunluk++;
+        length++;
     }
 
-    printf("\n anahatarin (satir ve sutun ) sayisini giriniz = ");
+    printf("\n Enter the key matrix size (rows and columns): ");
     scanf("%d", &n);
 
     for (i = 0; i < n; i++)
     {
-        for (j = 0; j < n; j++) //anahtar almak
+        for (j = 0; j < n; j++) //read the key matrix
         {
             printf("%d-%d = ", i + 1, j + 1);
-            scanf("%d", &anahtar[i][j]);
+            scanf("%d", &key[i][j]);
         }
     }
     
-    kalan = uzunluk % n;
-    yeni_uzunluk = uzunluk + kalan; //yeni uzunluk
-    y = yeni_uzunluk / n;
+    remainder = length % n;
+    new_length = length + remainder; //new length
+    y = new_length / n;
     
-    if(kelime[0]>64 && kelime[0]<91)//buyuk harfler için
+    if(word[0]>64 && word[0]<91)//for uppercase letters
     {    
         
         
-        for (i = 0; i < kalan; i++) //eksik girilen kelimeye 'A' eklemek
+        for (i = 0; i < remainder; i++) //pad the word with 'A' if needed
         {
-            kelime[uzunluk + i] = 'A';
+            word[length + i] = 'A';
         }
         
 
-        for (i = 0; i < y; i++) //kelimeyi iki boyutlu bir matrise eklemek
+        for (i = 0; i < y; i++) //store the word in a 2D matrix
         {
             for (j = 0; j < n; j++)
             {
-                kelime_2[i][j] = kelime[toplam + j] - 65; // A=0 , B=1 , C=2 ....VS seklinde yazmak
+                word_matrix[i][j] = word[total + j] - 65; // map A=0, B=1, C=2, ...
             }
-            toplam += j;
+            total += j;
 
             printf("\n");
         }
-        toplam = 0;
+        total = 0;
         for (i = 0; i < y; i++)
         {
             for (j = 0; j < n; j++)
             {
-                toplam2 = 0;
+                total2 = 0;
                 for (k = 0; k < n; k++)
                 {
-                    toplam2 += kelime_2[i][k] * anahtar[k][j]; //kelime matris ile anahtar carpimi
+                    total2 += word_matrix[i][k] * key[k][j]; //multiply word matrix by key matrix
                 }
-                toplam2 = toplam2 % 26;                       //mod almak
-                sifrelenen_kelime[j + toplam] = toplam2 + 65; //ascci taplosundaki degerine esitlemek
+                total2 = total2 % 26;                       //take mod
+                encrypted_word[j + total] = total2 + 65; //map back to ASCII character
             }
-            toplam += j;
+            total += j;
         }
                         
-    }else//kucuk harfler icin
+    }else//for lowercase letters
     {
-        for (i = 0; i < kalan; i++) //eksik girilen kelimeye 'a' eklemek
+        for (i = 0; i < remainder; i++) //pad the word with 'a' if needed
         {
-            kelime[uzunluk + i] = 'a';
+            word[length + i] = 'a';
         }
 
-          for (i = 0; i < y; i++) //kelimeyi iki boyutlu bir matrise eklemek
+          for (i = 0; i < y; i++) //store the word in a 2D matrix
         {
             for (j = 0; j < n; j++)
             {
-                kelime_2[i][j] = kelime[toplam + j] - 97; // a=0 , b=1 , c=2 ....VS seklinde yazmak
+                word_matrix[i][j] = word[total + j] - 97; // map a=0, b=1, c=2, ...
             }
-            toplam += j;
+            total += j;
 
             printf("\n");
         }
-        toplam = 0;
+        total = 0;
         for (i = 0; i < y; i++)
         {
             for (j = 0; j < n; j++)
             {
-                toplam2 = 0;
+                total2 = 0;
                 for (k = 0; k < n; k++)
                 {
-                    toplam2 += kelime_2[i][k] * anahtar[k][j]; //kelime matris ile anahtar carpimi
+                    total2 += word_matrix[i][k] * key[k][j]; //multiply word matrix by key matrix
                 }
-                toplam2 = toplam2 % 26;                       //mod almak
-                sifrelenen_kelime[j + toplam] = toplam2 + 97; //ascci taplosundaki degerine esitlemek
+                total2 = total2 % 26;                       //take mod
+                encrypted_word[j + total] = total2 + 97; //map back to ASCII character
             }
-            toplam += j;
+            total += j;
         } 
     }
         
-    printf("sifrelenen kelime : ");
-    for (i = 0; i < uzunluk ; i++)
+    printf("Encrypted word: ");
+    for (i = 0; i < length ; i++)
     {
-        printf("%c",sifrelenen_kelime[i]);
+        printf("%c",encrypted_word[i]);
     }
     
 }
